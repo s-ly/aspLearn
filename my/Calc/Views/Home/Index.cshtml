@@ -1,0 +1,39 @@
+﻿@* @model string *@
+@model Calc.Models.CalcData
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Калькулятор</title>
+</head>
+
+<body>
+    <div>
+        <h1>Калькулятор</h1>
+        <h3>Привет @Model.Str</h3>
+    </div>
+    <form asp-action="Submit" method="post">
+        <div>
+            <label>Имя</label>
+            <input asp-for="Str">
+        </div>
+        <div>
+            <label>Введите X</label>
+            <input asp-for="X">
+        </div>
+        <div>
+            <label>Введите Y</label>
+            <input asp-for="Y">
+        </div>
+        <button type="submit">submit</button>
+    </form>
+    <div>
+        <h3>Ответ: @Model.Answer</h3>
+    </div>
+</body>
+
+</html>
