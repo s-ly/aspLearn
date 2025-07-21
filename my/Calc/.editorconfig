@@ -1,0 +1,5 @@
+# Настройки для C#
+[*.cs]
+
+# Открывающая скобка на той же строке
+csharp_new_line_before_open_brace = none

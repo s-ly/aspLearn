@@ -7,19 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Calc.Models;
 
-namespace Calc.Controllers
-{
-    public class HomeController : Controller
-    {
-        public IActionResult Index()
-        {
+namespace Calc.Controllers {
+    public class HomeController : Controller {
+        public IActionResult Index() {
             return View("Index", Repository.dataRep);
         }
 
-        public ViewResult Submit(CalcData inputData)
-        {
-            if (ModelState.IsValid)
-            {
+        public ViewResult Submit(CalcData inputData) {
+            if (ModelState.IsValid) {
                 int x = inputData.X;
                 int y = inputData.Y;
                 string actionSelect = inputData.Action;
@@ -28,15 +23,12 @@ namespace Calc.Controllers
                 Repository.EditAnswer(answer);
                 Repository.EditData(inputData);
             }
-
             return View("Index", Repository.dataRep);
         }
 
-        private int Action(int x, int y, string action)
-        {
+        private int Action(int x, int y, string action) {
             int answerResult = 0;
-            switch (action)
-            {
+            switch (action) {
                 case "+": answerResult = x + y; break;
                 case "-": answerResult = x - y; break;
                 case "*": answerResult = x * y; break;
