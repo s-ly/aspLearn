@@ -13,25 +13,36 @@ namespace Calc.Controllers
     {
         public IActionResult Index()
         {
-            // string viewModel = "42";
-            // return View("Index", viewModel);
-            // CalcData data = new CalcData();
-            // data.Str = viewModel += "!";
-            // data.Str += "!";
-
-
             return View("Index", Repository.dataRep);
         }
 
         public ViewResult Submit(CalcData inputData)
         {
-            int x = inputData.X;
-            int y = inputData.Y;
-            int answer = x + y;
-            Repository.EditAnswer(answer);
+            if (ModelState.IsValid)
+            {
+                int x = inputData.X;
+                int y = inputData.Y;
+                string actionSelect = inputData.Action;
 
-            Repository.EditData(inputData);
+                int answer = Action(x, y, actionSelect);
+                Repository.EditAnswer(answer);
+                Repository.EditData(inputData);
+            }
+
             return View("Index", Repository.dataRep);
+        }
+
+        private int Action(int x, int y, string action)
+        {
+            int answerResult = 0;
+            switch (action)
+            {
+                case "+": answerResult = x + y; break;
+                case "-": answerResult = x - y; break;
+                case "*": answerResult = x * y; break;
+                case "/": answerResult = x / y; break;
+            }
+            return answerResult;
         }
     }
 }
