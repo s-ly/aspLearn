@@ -10,30 +10,33 @@
     <meta name="viewport" content="width=device-width" />
     <title>Калькулятор</title>
     <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css" />
 </head>
 
 <body>
-    <div>
+    <div class="bg-primary text-white text-center m-2 p-2">
         <h1>Калькулятор</h1>
+    </div>
+    <div class="text-center">
         <h3>Привет @Model.Str</h3>
     </div>
-    <form asp-action="Submit" method="post">
+    <form asp-action="Submit" method="post" class="m-2">
         <div asp-validation-summary="All"></div>
-        <div>
-            <label>Имя</label>
-            <input asp-for="Str">
+        <div class="form-group">
+            <label>Имя:</label>
+            <input asp-for="Str" class="form-control">
         </div>
-        <div>
-            <label>Введите X</label>
-            <input asp-for="X">
+        <div class="form-group">
+            <label>X:</label>
+            <input asp-for="X" class="form-control">
         </div>
-        <div>
-            <label>Введите Y</label>
-            <input asp-for="Y">
+        <div class="form-group">
+            <label>Y:</label>
+            <input asp-for="Y" class="form-control">
         </div>
-        <div>
-            <label>Выбор действия</label>
-            <select asp-for="Action">
+        <div class="form-group">
+            <label>Выбор действия:</label>
+            <select asp-for="Action" class="form-control">
                 <option value="">Выберите действие</option>
                 <option value="+">+ Сложить</option>
                 <option value="-">- Вычесть</option>
@@ -41,10 +44,10 @@
                 <option value="/">/ Разделить</option>
             </select>
         </div>
-        <button type="submit">submit</button>
+        <button type="submit" class="btn btn-primary">Посчитать</button>
     </form>
-    <div>
-        <h3>Ответ: @Model.Answer</h3>
+    <div class="m-2">
+        <h4>Ответ: @Model.Answer</h4>
     </div>
 </body>
 
