@@ -13,7 +13,7 @@ namespace SportsStore.Migrations
                     ProductID = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Discription = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     Price = table.Column<decimal>(type: "decimal(8,2)", nullable: false),
                     Category = table.Column<string>(nullable: true)
                 },
