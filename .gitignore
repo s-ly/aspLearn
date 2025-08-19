@@ -52,3 +52,6 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# LibMan
+book/SportsSln/SportsStore/wwwroot/lib/twitter-bootstrap
