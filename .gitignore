@@ -55,3 +55,6 @@ nunit-*.xml
 
 # LibMan
 book/SportsSln/SportsStore/wwwroot/lib/twitter-bootstrap
+
+# Book
+*.pdf

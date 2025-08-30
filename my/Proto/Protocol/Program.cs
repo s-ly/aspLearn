@@ -1,29 +1,34 @@
-using Microsoft.AspNetCore.HttpLogging;
-
 var builder = WebApplication.CreateBuilder(args);
-
-// Регистрация службы логирования HTTP-трафика.
-// Логируем всё: запросы и ответы.
-builder.Services.AddHttpLogging(opts => {
-    opts.LoggingFields =
-        HttpLoggingFields.Request |         // Запросы (метод, путь, заголовки)
-        HttpLoggingFields.Response |        // Ответы (статус, заголовки)
-        HttpLoggingFields.RequestBody |     // Тело запроса (если нужно)
-        HttpLoggingFields.ResponseBody;     // Тело ответа (важно!)
-});
-
-// Фильтр логирования: выводим информационные сообщения и выше
-builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Information);
-
 var app = builder.Build();
 
-// Активация промежуточного ПО в Development
-if (app.Environment.IsDevelopment()) {
-    app.UseHttpLogging();
+app.UseWelcomePage("/");
+
+// Не обязательный, он уже добавлен – просмотр исключений в окружении разработки.
+// Генерирует HTML-страницу, которую возвращает пользователю с кодом состояния 500.
+app.UseDeveloperExceptionPage();
+
+/* Есть и другие компоненты, которые вставляются автоматически:
+   HostFilteringMiddleware – компонент связан с безопасностью; 
+ForwardedHeadersMiddleware – управляет обработкой пересылаемых заголовков;
+         RoutingMiddleware – если добавляются конечные точки, метод UseRouting() 
+                             выполняется до добавления в приложение какого-либо собственного компонента;
+  AuthenticationMiddleware – компонент аутентифицирует пользователя для запроса;
+   AuthorizationMiddleware – определяет, разрешено ли пользователю выполнить конечную точку;
+        EndpointMiddleware – соединяется с RoutingMiddleware для выполнения конечной точки. 
+                             Добавляется в конец конвейера после любого другого компонента.
+*/
+
+// Настраивает другой конвейер, когда он не работает в окружении разработки
+if (!app.Environment.IsDevelopment()) {
+    // не будет передавать конфиденциальные данные при запуске в промышленном окружении
+    app.UseExceptionHandler("/Error");
 }
 
-app.MapGet("/", () => new Patient("Tony"));
+app.UseStaticFiles();
+app.UseRouting();
+app.MapGet("/", () => "Hello World!");
+
+// Эта конечная точка ошибки будет выполнена при обработке исключения
+app.MapGet("/error", () => "Sorry, an error occurred.");
 
 app.Run();
-
-public record Patient(string name);
