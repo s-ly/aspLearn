@@ -1,34 +1,58 @@
+using System.Collections.Concurrent;
+
 var builder = WebApplication.CreateBuilder(args);
+
 var app = builder.Build();
 
-app.UseWelcomePage("/");
+var _fruit = new ConcurrentDictionary<string, Fruit>();
 
-// Не обязательный, он уже добавлен – просмотр исключений в окружении разработки.
-// Генерирует HTML-страницу, которую возвращает пользователю с кодом состояния 500.
-app.UseDeveloperExceptionPage();
+app.MapGet("/", () => "Welcome!");
+app.MapGet("/fruit", () => _fruit);
 
-/* Есть и другие компоненты, которые вставляются автоматически:
-   HostFilteringMiddleware – компонент связан с безопасностью; 
-ForwardedHeadersMiddleware – управляет обработкой пересылаемых заголовков;
-         RoutingMiddleware – если добавляются конечные точки, метод UseRouting() 
-                             выполняется до добавления в приложение какого-либо собственного компонента;
-  AuthenticationMiddleware – компонент аутентифицирует пользователя для запроса;
-   AuthorizationMiddleware – определяет, разрешено ли пользователю выполнить конечную точку;
-        EndpointMiddleware – соединяется с RoutingMiddleware для выполнения конечной точки. 
-                             Добавляется в конец конвейера после любого другого компонента.
-*/
+// Обработчик GET-запроса для получения конкретного фрукта (/fruit/{id})
+// Логика:
+// 1. Пытается получить фрукт по ID из словаря
+// 2. Если найден - возвращает HTTP 200 с данными
+// 3. Если не найден - возвращает HTTP 404 ProblemDetails
+var GetFruit = (string id) =>
+    _fruit.TryGetValue(id, out var fruit)
+    ? TypedResults.Ok(fruit)
+    : Results.Problem(statusCode: 404);
 
-// Настраивает другой конвейер, когда он не работает в окружении разработки
-if (!app.Environment.IsDevelopment()) {
-    // не будет передавать конфиденциальные данные при запуске в промышленном окружении
-    app.UseExceptionHandler("/Error");
-}
+// Регистрируем маршрут и применяем валидацию ID через фильтр
+// AddEndpointFilter - позволяет добавить middleware для проверки параметров
+app.MapGet("/fruit/{id}", GetFruit).AddEndpointFilter(ValidationHelper.ValidateId);
 
-app.UseStaticFiles();
-app.UseRouting();
-app.MapGet("/", () => "Hello World!");
-
-// Эта конечная точка ошибки будет выполнена при обработке исключения
-app.MapGet("/error", () => "Sorry, an error occurred.");
+var AddFruit = (string id, Fruit fruit) => _fruit.TryAdd(id, fruit);
+app.MapPost("/fruit/{id}", AddFruit);
 
 app.Run();
+
+// Класс-валидатор для проверки формата идентификатора
+class ValidationHelper
+{
+    // Фильтр проверяет первый аргумент (ID) на соответствие требованиям
+    internal static async ValueTask<object?> ValidateId(
+        EndpointFilterInvocationContext context, // содержащий информацию о текущем вызове эндпоинта
+        EndpointFilterDelegate next) // Делегат, представляющий следующий шаг в цепочке фильтров или саму логику эндпоинта.
+    {
+        // Получаем ID из контекста вызова    
+        var id = context.GetArgument<string>(0);
+
+        // Проверяем валидность ID:
+        // 1. Не должен быть пустым
+        // 2. Должен начинаться с символа 'f'
+        if (string.IsNullOrEmpty(id) || !id.StartsWith('f'))
+        {
+            return Results.ValidationProblem(
+                    new Dictionary<string, string[]> {
+                        {"id", new[]{"Invalid format. Id must start with 'f'"}}
+                    });
+        }
+
+        // Если валидация прошла успешно - продолжаем выполнение
+        return await next(context);
+    }
+}
+
+record Fruit(string Name, int Stock);

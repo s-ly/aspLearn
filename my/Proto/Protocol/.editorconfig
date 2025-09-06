@@ -4,4 +4,7 @@
 # indent_size = 2
 
 # Открывающая скобка на той же строке
-csharp_new_line_before_open_brace = none
+# csharp_new_line_before_open_brace = none
+
+# Переносить открывающую скобку на новую строку для всех конструкций
+# csharp_new_line_before_open_brace = all
