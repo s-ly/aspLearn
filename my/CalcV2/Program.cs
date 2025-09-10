@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.HttpLogging;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHttpLogging(opts => opts.LoggingFields = HttpLoggingFields.RequestProperties);
-
+builder.Services.AddHttpLogging(opts => opts.LoggingFields = HttpLoggingFields.RequestProperties); // логирование
 var app = builder.Build();
 
 Resultat result = new Resultat();
@@ -25,7 +24,20 @@ var SetArg = (Arguments arg) =>
     return Results.Ok();
 };
 
-app.UseHttpLogging();
+app.UseHttpLogging(); // логирование
+
+// обработчик ошибок
+app.UseExceptionHandler("/error");
+
+// Определим маршрут для ошибок
+app.Map("/error", () => Results.Problem("Произошла ошибка. Попробуйте позже."));
+// app.Map("/error", () => "Произошла ошибка. Попробуйте позже!.");
+
+// маршрут с ошибкой
+app.MapGet("/force-error", () =>
+{
+    throw new InvalidOperationException("Принудительная ошибка");
+});
 
 app.MapGet("/", () => "Hello Calc!");
 app.MapGet("/result", calculate);
