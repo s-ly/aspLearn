@@ -11,8 +11,8 @@ List<ActionList> allOperations = new List<ActionList>(); // список все�
 void addus()
 {
     ActionList a = new ActionList();
-    a.Arg = new Arguments();
-    a.Res = new Resultat();
+    // a.Arg = new Arguments();
+    // a.Res = new Resultat();
 
     a.Arg.X = arguments.X;
     a.Arg.Y = arguments.Y;
@@ -81,7 +81,7 @@ class Resultat
 
 class ActionList
 {
-    public Arguments? Arg { get; set; }
-    public Resultat? Res { get; set; }
+    public Arguments Arg { get; set; } = new Arguments();
+    public Resultat Res { get; set; } = new Resultat();
 }
 
