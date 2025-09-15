@@ -1,24 +1,26 @@
+# Отправка запросов на CalcV2
+
 import requests
 import sys
 
 
-def rec():
+def map_hello():
     response = requests.get("http://localhost:5224")
     PrintRecuest(response)
 
 
-def rec_result():
+def map_result():
     response = requests.get("http://localhost:5224/result")
     PrintRecuest(response)
 
 
-def rec_arg():
+def map_arguments():
     response = requests.get("http://localhost:5224/arguments")
     PrintRecuest(response)
 
 
-def recPost():
-    data = {"X": "asd", "Y": 6}
+def map_post_set_arg():
+    data = {"X": 50, "Y": 60}
     response = requests.post(
         "http://localhost:5224/setArg",
         json=data,
@@ -39,18 +41,18 @@ if __name__ == "__main__":
     print()
     # нет аргументов (на самом деле имя это первый аргумент)
     if len(sys.argv) < 2:
-        print("Использование: python pytest.py <метод>")
-        print("Доступные методы: rec, rec_arg, recPost")
+        print("Использование: python pytest.py <метод>")        
     else:
         method = sys.argv[1]
-        if method == "rec":
-            rec()
-        elif method == "rec_arg":
-            rec_arg()
-        elif method == "recPost":
-            recPost()
-        elif method == "rec_result":
-            rec_result()
+        if method == "map_hello":
+            map_hello()
+        elif method == "map_arguments":
+            map_arguments()
+        elif method == "map_post_set_arg":
+            map_post_set_arg()
+        elif method == "map_result":
+            map_result()
         else:
             print(f"Неизвестный метод: {method}")
-            print("Доступные методы: rec, rec_arg, recPost, rec_result")
+            print("Доступные методы:")
+            print("map_hello, map_arguments, map_result, map_post_set_arg")

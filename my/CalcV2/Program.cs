@@ -1,23 +1,45 @@
 using Microsoft.AspNetCore.HttpLogging;
 
-//builder.Services.AddHttpLogging(opts => opts.LoggingFields = HttpLoggingFields.RequestProperties);
-
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpLogging(opts => opts.LoggingFields = HttpLoggingFields.RequestProperties); // логирование
 var app = builder.Build();
 
 Resultat result = new Resultat();
 Arguments arguments = new Arguments();
+List<ActionList> allOperations = new List<ActionList>(); // список всех операций
 
-Func<Resultat> calculate = () =>
+void addus()
+{
+    ActionList a = new ActionList();
+    a.Arg = new Arguments();
+    a.Res = new Resultat();
+
+    a.Arg.X = arguments.X;
+    a.Arg.Y = arguments.Y;
+    a.Res.Result = result.Result;
+
+    allOperations.Add(a);
+}
+
+void logus()
+{
+    Console.WriteLine("------ list ------");
+    foreach (ActionList a in allOperations)
+    {
+        Console.WriteLine($"X= {a.Arg.X} Y= {a.Arg.Y} RES= {a.Res.Result}");
+    }
+}
+
+Func<Resultat> act_calculate = () =>
 {
     int res = arguments.X + arguments.Y;
     result.Result = res;
+    addus();
+    logus();
     return result;
 };
 
-var SetArg = (Arguments arg) =>
+var act_SetArg = (Arguments arg) =>
 {
     arguments.X = arg.X;
     arguments.Y = arg.Y;
@@ -31,7 +53,6 @@ app.UseExceptionHandler("/error");
 
 // Определим маршрут для ошибок
 app.Map("/error", () => Results.Problem("Произошла ошибка. Попробуйте позже."));
-// app.Map("/error", () => "Произошла ошибка. Попробуйте позже!.");
 
 // маршрут с ошибкой
 app.MapGet("/force-error", () =>
@@ -40,9 +61,9 @@ app.MapGet("/force-error", () =>
 });
 
 app.MapGet("/", () => "Hello Calc!");
-app.MapGet("/result", calculate);
+app.MapGet("/result", act_calculate);
 app.MapGet("/arguments", () => arguments);
-app.MapPost("setArg", SetArg);
+app.MapPost("setArg", act_SetArg);
 
 app.Run();
 
@@ -56,5 +77,11 @@ class Arguments
 class Resultat
 {
     public int Result { get; set; }
+}
+
+class ActionList
+{
+    public Arguments? Arg { get; set; }
+    public Resultat? Res { get; set; }
 }
 
