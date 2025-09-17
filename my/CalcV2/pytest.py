@@ -18,9 +18,13 @@ def map_arguments():
     response = requests.get("http://localhost:5224/arguments")
     PrintRecuest(response)
 
+def map_one_result():
+    response = requests.get("http://localhost:5224/oneResult/5")
+    PrintRecuest(response)
+
 
 def map_post_set_arg():
-    data = {"X": 50, "Y": 60}
+    data = {"X": 55, "Y": 66}
     response = requests.post(
         "http://localhost:5224/setArg",
         json=data,
@@ -50,9 +54,11 @@ if __name__ == "__main__":
             map_arguments()
         elif method == "map_post_set_arg":
             map_post_set_arg()
+        elif method == "map_one_result":
+            map_one_result()
         elif method == "map_result":
             map_result()
         else:
             print(f"Неизвестный метод: {method}")
             print("Доступные методы:")
-            print("map_hello, map_arguments, map_result, map_post_set_arg")
+            print("map_hello, map_arguments, map_result, map_one_result, map_post_set_arg")

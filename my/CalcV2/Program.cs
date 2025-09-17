@@ -11,8 +11,6 @@ List<ActionList> allOperations = new List<ActionList>(); // список все�
 void addus()
 {
     ActionList a = new ActionList();
-    // a.Arg = new Arguments();
-    // a.Res = new Resultat();
 
     a.Arg.X = arguments.X;
     a.Arg.Y = arguments.Y;
@@ -30,13 +28,21 @@ void logus()
     }
 }
 
-Func<Resultat> act_calculate = () =>
+void logusId(int id)
+{
+    Console.WriteLine("------ one action ------");
+    var data = allOperations[id];
+    Console.WriteLine($"X= {data.Arg.X} Y= {data.Arg.Y} RES= {data.Res.Result}");
+}
+
+Func<IResult> act_calculate = () =>
 {
     int res = arguments.X + arguments.Y;
     result.Result = res;
     addus();
     logus();
-    return result;
+    // return  result;
+    return  Results.Ok(result);
 };
 
 var act_SetArg = (Arguments arg) =>
@@ -44,6 +50,23 @@ var act_SetArg = (Arguments arg) =>
     arguments.X = arg.X;
     arguments.Y = arg.Y;
     return Results.Ok();
+};
+
+var act_oneResult = (int id) =>
+{
+    Console.WriteLine($"id= {id}");
+
+    if (allOperations.Count == 0)
+    {
+        return Results.Problem("Список операций пуст");
+    }
+    if (id < 0 || id >= allOperations.Count)
+    {
+        return Results.Problem($"Неверный индекс: {id}");
+    }
+
+    logusId(id);
+    return Results.Ok(); // Возвращаем корректный результат
 };
 
 app.UseHttpLogging(); // логирование
@@ -63,6 +86,7 @@ app.MapGet("/force-error", () =>
 app.MapGet("/", () => "Hello Calc!");
 app.MapGet("/result", act_calculate);
 app.MapGet("/arguments", () => arguments);
+app.MapGet("/oneResult/{id}", act_oneResult);
 app.MapPost("setArg", act_SetArg);
 
 app.Run();
