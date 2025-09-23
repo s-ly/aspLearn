@@ -2,12 +2,7 @@
 using System.Net.Http.Json;
 
 Console.WriteLine("Клиент для HTTP-калькулятора");
-
-// await MapHello();
-// await MapArguments();
-
 var client = new HttpClient();
-// await SendGetRequest("/");
 
 while (true)
 {
@@ -20,6 +15,7 @@ while (true)
         case "2": await SendGetRequest("/arguments"); break;
         case "3": await SetArguments(); break;
         case "4": await SendGetRequest("/result"); break;
+        case "5": await SetOneResult(); break;
         case "9": return;
         default: Console.WriteLine("Неверная команда."); break;
     }
@@ -34,6 +30,7 @@ static void PrintComand()
     Console.WriteLine("2 - GET /arguments - получить аргументы");
     Console.WriteLine("3 - POST /setArg - задать аргументы");
     Console.WriteLine("4 - GET /result - получить результат");
+    Console.WriteLine("5 - GET /oneResult/{id} - получить первый результат");
     Console.WriteLine("9 - выход");
 }
 
@@ -55,7 +52,7 @@ async Task SetArguments()
     Console.Write("Y: ");
     if (!int.TryParse(Console.ReadLine(), out int y))
     {
-        Console.WriteLine("❌ Неверный формат X");
+        Console.WriteLine("❌ Неверный формат Y");
         return;
     }
 
@@ -63,28 +60,17 @@ async Task SetArguments()
     var response = await client.PostAsJsonAsync($"http://localhost:5224/setArg", args);
     await PrintRequest(response);
 }
-//////////////////////////////////////////////////////////////////////////
 
-static async Task MapHello()
+async Task SetOneResult()
 {
-    using var client = new HttpClient();
-    var response = await client.GetAsync("http://localhost:5224");
-}
-
-static async Task MapArguments()
-{
-    using var client = new HttpClient();
-    var response = await client.GetAsync("http://localhost:5224/arguments");
-    await PrintRequest(response);
-}
-
-
-static async Task MapSetArguments()
-{
-    using var client = new HttpClient();
-    var arguments = new { X = 10, Y = 20 };
-    var response = await client.PostAsJsonAsync("http://localhost:5224/setArg", arguments);
-    await PrintRequest(response);
+    Console.Write("id: ");
+    if (!int.TryParse(Console.ReadLine(), out int r))
+    {
+        Console.WriteLine("❌ Неверный формат id");
+        return;
+    }
+    string finalEndPoint = "/oneResult/" + r.ToString();
+    await SendGetRequest(finalEndPoint);
 }
 
 // Печатает ответ
