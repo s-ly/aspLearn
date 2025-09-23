@@ -42,7 +42,7 @@ Func<IResult> act_calculate = () =>
     addus();
     logus();
     // return  result;
-    return  Results.Ok(result);
+    return Results.Ok(result);
 };
 
 var act_SetArg = (Arguments arg) =>
@@ -86,7 +86,7 @@ app.MapGet("/force-error", () =>
 app.MapGet("/", () => "Hello Calc!");
 app.MapGet("/result", act_calculate);
 app.MapGet("/arguments", () => arguments);
-app.MapGet("/oneResult/{id}", act_oneResult);
+app.MapGet("/oneResult/{id:int}", act_oneResult);
 app.MapPost("setArg", act_SetArg);
 
 app.Run();

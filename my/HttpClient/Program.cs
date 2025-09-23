@@ -30,7 +30,7 @@ static void PrintComand()
     Console.WriteLine("2 - GET /arguments - получить аргументы");
     Console.WriteLine("3 - POST /setArg - задать аргументы");
     Console.WriteLine("4 - GET /result - получить результат");
-    Console.WriteLine("5 - GET /oneResult/{id} - получить первый результат");
+    Console.WriteLine("5 - GET /oneResult/{id} - получить результат по id");
     Console.WriteLine("9 - выход");
 }
 
