@@ -16,6 +16,7 @@ while (true)
         case "3": await SetArguments(); break;
         case "4": await SendGetRequest("/result"); break;
         case "5": await SetOneResult(); break;
+        case "6": await SetOneResultParse(); break;
         case "9": return;
         default: Console.WriteLine("Неверная команда."); break;
     }
@@ -31,6 +32,7 @@ static void PrintComand()
     Console.WriteLine("3 - POST /setArg - задать аргументы");
     Console.WriteLine("4 - GET /result - получить результат");
     Console.WriteLine("5 - GET /oneResult/{id} - получить результат по id");
+    Console.WriteLine("6 - GET /oneResultParse/{id} - получить результат по id (TryParse())");
     Console.WriteLine("9 - выход");
 }
 
@@ -70,6 +72,18 @@ async Task SetOneResult()
         return;
     }
     string finalEndPoint = "/oneResult/" + r.ToString();
+    await SendGetRequest(finalEndPoint);
+}
+
+async Task SetOneResultParse()
+{
+    Console.Write("id: ");
+    if (!int.TryParse(Console.ReadLine(), out int r))
+    {
+        Console.WriteLine("❌ Неверный формат id");
+        return;
+    }
+    string finalEndPoint = "/oneResultParse/" + 'p' + r.ToString();
     await SendGetRequest(finalEndPoint);
 }
 

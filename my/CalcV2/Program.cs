@@ -69,6 +69,24 @@ var act_oneResult = (int id) =>
     return Results.Ok(); // Возвращаем корректный результат
 };
 
+// только для демонстрации испотльзования собственных типов с привязкой данных
+var act_oneResultParse = (ResultId id) =>
+{
+    Console.WriteLine($"id= {id}");
+
+    if (allOperations.Count == 0)
+    {
+        return Results.Problem("Список операций пуст");
+    }
+    if (id.Id < 0 || id.Id >= allOperations.Count)
+    {
+        return Results.Problem($"Неверный индекс: {id}");
+    }
+
+    logusId(id.Id);
+    return Results.Ok(); // Возвращаем корректный результат
+};
+
 app.UseHttpLogging(); // логирование
 
 // обработчик ошибок
@@ -87,9 +105,28 @@ app.MapGet("/", () => "Hello Calc!");
 app.MapGet("/result", act_calculate);
 app.MapGet("/arguments", () => arguments);
 app.MapGet("/oneResult/{id:int}", act_oneResult);
+app.MapGet("/oneResultParse/{id}", act_oneResultParse);
 app.MapPost("setArg", act_SetArg);
 
 app.Run();
+
+// Реализация TryParse в собственном типе, позволяющая выполнить разбор значений маршрута.
+// Тапример поступает строка p123, а он её нормально привязывает как int, так-как мы реализовали
+// TryParse(), а в ём 'p' - отделяется и остаток парсится как число.
+// Это даёт нам привязку данных в конечной точке.
+readonly record struct ResultId(int Id)
+{
+    public static bool TryParse(string? s, out ResultId result)
+    {
+        if (s is not null && s.StartsWith('p') && int.TryParse(s.AsSpan().Slice(1), out int id))
+        {
+            result = new ResultId(id);
+            return true;
+        }
+        result = default;
+        return false;
+    }
+}
 
 class Arguments
 {
