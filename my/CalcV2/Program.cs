@@ -13,6 +13,7 @@ Resultat result = new Resultat();
 Arguments arguments = new Arguments();
 List<ActionList> allOperations = new List<ActionList>(); // список всех операций
 
+// Наполняет список операций и результатов.
 void addus()
 {
     ActionList a = new ActionList();
@@ -24,6 +25,7 @@ void addus()
     allOperations.Add(a);
 }
 
+// ПсевдоЛогирование.
 void logus()
 {
     Console.WriteLine("------ list ------");
@@ -71,7 +73,7 @@ var act_oneResult = (int id) =>
     }
 
     logusId(id);
-    return Results.Ok(); // Возвращаем корректный результат
+    return Results.Ok(allOperations[id]); // Возвращаем корректный результат
 };
 
 // только для демонстрации испотльзования собственных типов с привязкой данных
@@ -104,21 +106,50 @@ app.Map("/error", () => Results.Problem("Произошла ошибка. Поп
 app.MapGet("/force-error", () =>
 {
     throw new InvalidOperationException("Принудительная ошибка");
-});
+}).WithSummary("маршрут с ошибкой");
 
-app.MapGet("/", () => "Hello Calc!");
-app.MapGet("/result", act_calculate);
-app.MapGet("/arguments", () => arguments);
-app.MapGet("/oneResult/{id:int}", act_oneResult);
-app.MapGet("/oneResultParse/{id}", act_oneResultParse);
-app.MapPost("setArg", act_SetArg);
+app.MapGet("/", () => "Hello Calc!")
+// .WithTags("Мой тег")
+.WithSummary("Привествие")
+.WithDescription("Привествие Hello Calc!");
+
+// МАРШРУТ - Вычислить результат
+app.MapGet("/calculate", act_calculate)
+.WithSummary("Вычислить результат")
+.WithDescription("Результат вычисления X и Y. Возвращает поле result");
+
+// МАРШРУТ - Получить все результаты
+app.MapGet("/results", () =>
+{
+    return Results.Ok(allOperations);
+})
+.WithSummary("Получить все результаты")
+.WithDescription("получить все операции и результаты. Возвращает поле allOperations");
+
+app.MapGet("/arguments", () => arguments)
+.WithSummary("Получить аргументы X и Y")
+.WithDescription("Возвращает поле arguments, которое содержит X и Y.");
+
+app.MapGet("/oneResult/{id:int}", act_oneResult)
+.WithSummary("GET /oneResult/{id} - получить результат по id")
+.WithDescription("GET /oneResult/{id} - получить результат по id");
+
+app.MapGet("/oneResultParse/{id}", act_oneResultParse)
+.WithSummary("GET /oneResultParse/{id} - получить результат по id (TryParse())")
+.WithDescription("GET /oneResultParse/{id} - получить результат по id (TryParse())");
+
+app.MapPost("setArg", act_SetArg)
+.WithSummary("POST /setArg - задать аргументы")
+.WithDescription("POST /setArg - задать аргументы");
 
 app.Run();
 
-// Реализация TryParse в собственном типе, позволяющая выполнить разбор значений маршрута.
-// Тапример поступает строка p123, а он её нормально привязывает как int, так-как мы реализовали
-// TryParse(), а в ём 'p' - отделяется и остаток парсится как число.
-// Это даёт нам привязку данных в конечной точке.
+/*
+Реализация TryParse в собственном типе, позволяющая выполнить разбор значений маршрута.
+Например поступает строка p123, а он её нормально привязывает как int, так-как мы реализовали
+TryParse(), а в ём 'p' - отделяется и остаток парсится как число.
+Это даёт нам привязку данных в конечной точке.
+*/
 readonly record struct ResultId(int Id)
 {
     public static bool TryParse(string? s, out ResultId result)
@@ -133,18 +164,20 @@ readonly record struct ResultId(int Id)
     }
 }
 
+// Первое и второе числа.
 class Arguments
 {
     public int X { get; set; }
     public int Y { get; set; }
 }
 
-// record Resultat(int Result);
+// Результат вичислений.
 class Resultat
 {
     public int Result { get; set; }
 }
 
+// Аргументы и результат их вычисдения.
 class ActionList
 {
     public Arguments Arg { get; set; } = new Arguments();
