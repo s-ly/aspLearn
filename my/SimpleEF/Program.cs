@@ -2,7 +2,9 @@
 
 Console.WriteLine("🚀 Начинаем работу с EF Core!");
 
-AddUser("Сергей3", "sergey3@test.com", 25);
+AddUser("Сергей4", "sergey4@test.com", 35);
+SetOrderForUser("Сергей4");
+
 
 // Читаем пользователей
 var users = db.Users.ToList();
@@ -14,6 +16,25 @@ foreach (var u in users)
 
 // Обновляем существующего пользователя если нужно
 // UpdateUserAge(1, 28);
+
+// Добавляем заказ пользователю
+void SetOrderForUser(string nameUser)
+{
+    // находим пользователя по имени    
+    var user = db.Users.First(u => u.Name == nameUser);
+
+    // Создаём заказ
+    var order = new Order
+    {
+        ProductName = "Книга",
+        Price = 500,
+        UserId = user.Id
+    };
+
+    db.Orders.Add(order);
+    db.SaveChanges();
+    Console.WriteLine("✅ Заказ добавлен!");
+}
 
 // Добавляем пользователя
 void AddUser(string name, string email, int? age = null)
