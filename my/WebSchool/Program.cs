@@ -18,6 +18,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+var act = () =>  "Users..."; 
+
 app.MapGet("/", () => "Hello World!");
+app.MapGet("/getusers", act);
+
 
 app.Run();
