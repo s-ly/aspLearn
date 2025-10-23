@@ -9,8 +9,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Используем PostgreSQL
-// string connectionStr = "Host=localhost;Database=gentrifr;Username=gentrifr;Port=5432"; // в школе
-string connectionStr = "Host=localhost;Database=mydb;Username=sergey;Password=2988";  // в домашнем
+string connectionStr = "Host=localhost;Database=gentrifr;Username=gentrifr;Port=5432"; // в школе
+// string connectionStr = "Host=localhost;Database=mydb;Username=sergey;Password=2988";  // в домашнем
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionStr));
 
 var app = builder.Build();
